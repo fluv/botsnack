@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -46,6 +46,18 @@ jobs:
             type=sha,prefix=sha-,format=short
             type=semver,pattern={{version}},value=v${{ steps.get_version.outputs.version }}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/heads/main') }}
+
+      - name: Tag commit with version
+        run: |
+          TAG="v${{ steps.get_version.outputs.version }}"
+          if git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
+            echo "Tag $TAG already exists, skipping"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
 
       - name: Build and push
         uses: docker/build-push-action@v6
