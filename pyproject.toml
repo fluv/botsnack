@@ -1,10 +1,11 @@
 [project]
 name = "botsnack"
-version = "0.3.0"
+version = "0.3.1"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.136.3",
+    "inflect>=7.5.0",
     "pillow>=12.2.0",
     "torch>=2.12.0",
     "torchvision>=0.27.0"

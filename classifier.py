@@ -10,7 +10,7 @@ model.eval()
 
 preprocess = models.ResNet50_Weights.DEFAULT.transforms()
 
-def classify(data: bytes, limit: int = 5) -> list:
+def classify(data: bytes, limit: int = 5) -> list[tuple[str, float]]:
     image = Image.open(io.BytesIO(data)).convert("RGB")
     tensor = preprocess(image)
     tensor = tensor.unsqueeze(0) 
