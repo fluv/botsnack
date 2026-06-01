@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile
+from opinions import get_opinion, reactions
 import classifier
 import inflect
 
@@ -26,6 +27,6 @@ async def botsnack(file: UploadFile | None = None) -> str:
     data = await file.read()
     try:
         result = classifier.classify(data)[0][0]
-        return "Yum, " + p.a(result) + "!"
+        return reactions[get_opinion(result)].format(a_thing=p.a(result))
     except IndexError:
         return "Yum!!"
