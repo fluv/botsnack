@@ -19,11 +19,13 @@ async def classify(file: UploadFile) -> list[dict]:
 
 
 @app.post('/botsnack')
-async def botsnack(file: UploadFile) -> str:
+async def botsnack(file: UploadFile | None = None) -> str:
     """Classifies a file and replies as if we just ate the file"""
+    if not file:
+        return "Yum!"
     data = await file.read()
     try:
         result = classifier.classify(data)[0][0]
         return "Yum, " + p.a(result) + "!"
     except IndexError:
-        return "Yum!"
+        return "Yum!!"
