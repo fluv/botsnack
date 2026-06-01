@@ -1,14 +1,16 @@
 import torchvision.models as models
 import torch
 import io
+from os import getenv
 from PIL import Image
 
+model_name = getenv("CLASSIFIER_MODEL", "resnet50")
 
-model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
-labels = models.ResNet50_Weights.DEFAULT.meta["categories"]
+weights = models.get_model_weights(model_name).DEFAULT
+model = models.get_model(model_name, weights=weights)
+labels = weights.meta["categories"]
 model.eval()
-
-preprocess = models.ResNet50_Weights.DEFAULT.transforms()
+preprocess = weights.transforms()
 
 def classify(data: bytes, limit: int = 5) -> list[tuple[str, float]]:
     image = Image.open(io.BytesIO(data)).convert("RGB")
