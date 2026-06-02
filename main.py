@@ -1,8 +1,11 @@
+import logging
+
 from fastapi import FastAPI, UploadFile
 from opinions import get_opinion, reactions
 import classifier
 import inflect
 
+logger = logging.getLogger(__name__)
 app = FastAPI()
 p = inflect.engine()
 
@@ -23,10 +26,13 @@ async def classify(file: UploadFile) -> list[dict]:
 async def botsnack(file: UploadFile | None = None) -> str:
     """Classifies a file and replies as if we just ate the file"""
     if not file:
+        logger.info("no file specified")
         return "Yum!"
     data = await file.read()
     try:
         result = classifier.classify(data)[0][0]
+        logger.info(f"result: {result}")
         return reactions[get_opinion(result)].format(a_thing=p.a(result))
-    except IndexError:
+    except IndexError or KeyError:
+        logger.warning("result not found")
         return "Yum!!"
